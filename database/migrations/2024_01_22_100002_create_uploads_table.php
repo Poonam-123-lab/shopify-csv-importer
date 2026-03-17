@@ -16,6 +16,7 @@ return new class extends Migration
             $table->unsignedInteger('total_rows')->default(0);
             $table->unsignedInteger('processed_rows')->default(0);
             $table->unsignedInteger('failed_rows')->default(0);
+            $table->string('collection_id')->nullable(); // Shopify collection ID
             $table->timestamps();
         });
     }

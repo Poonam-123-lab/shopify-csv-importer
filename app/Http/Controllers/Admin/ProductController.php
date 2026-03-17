@@ -4,13 +4,12 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Product;
-use App\Services\ShopifyService;
+use App\Models\ActivityLog;
+use App\Jobs\SyncProductToShopify;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
-    public function __construct(protected ShopifyService $shopify) {}
-
     public function index(Request $request)
     {
         if (!session('admin_logged_in')) {
@@ -53,26 +52,21 @@ class ProductController extends Controller
         }
 
         $product = Product::findOrFail($id);
+        $product->update(['status' => 'pending']);
 
-        try {
-            $shopifyProduct = $this->shopify->createProduct([
-                'title'      => $product->title,
-                'body_html'  => $product->description,
-                'variants'   => [[
-                    'price' => $product->price,
-                    'sku'   => $product->sku,
-                ]],
-            ]);
+        $collectionId = $product->upload->collection_id ?? null;
 
-            $product->update([
-                'shopify_product_id' => $shopifyProduct['id'] ?? null,
-                'status'             => 'synced',
-            ]);
+        SyncProductToShopify::dispatch($product->id, $collectionId)
+            ->onQueue('shopify');
 
-            return redirect()->back()->with('success', 'Product successfully synced to Shopify.');
-        } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Retry failed: ' . $e->getMessage());
-        }
+        ActivityLog::record(
+            event:     'product_retry',
+            message:   "Manual retry dispatched for product '{$product->title}'.",
+            uploadId:  $product->upload_id,
+            productId: $product->id
+        );
+
+        return redirect()->back()->with('success', 'Retry dispatched — product will sync shortly.');
     }
 
     public function destroy($id)
@@ -85,6 +79,6 @@ class ProductController extends Controller
 
         return redirect()
             ->route('admin.products.index')
-            ->with('success', 'Product deleted successfully.');
+            ->with('success', 'Product deleted.');
     }
 }

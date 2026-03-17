@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Upload;
 use App\Models\Product;
 use App\Models\ErrorLog;
+use App\Models\ActivityLog;
 
 class DashboardController extends Controller
 {
@@ -15,40 +16,54 @@ class DashboardController extends Controller
             return redirect()->route('admin.login');
         }
 
-        $totalUploads      = Upload::count();
-        $pendingUploads    = Upload::where('status', 'pending')->orWhere('status', 'processing')->count();
-        $completedUploads  = Upload::where('status', 'completed')->count();
-        $failedUploads     = Upload::where('status', 'failed')->count();
+        // Upload stats
+        $totalUploads     = Upload::count();
+        $pendingUploads   = Upload::whereIn('status', ['pending', 'processing'])->count();
+        $completedUploads = Upload::where('status', 'completed')->count();
+        $failedUploads    = Upload::where('status', 'failed')->count();
 
-        $totalProducts     = Product::count();
-        $syncedProducts    = Product::where('status', 'synced')->count();
-        $pendingProducts   = Product::where('status', 'pending')->count();
-        $failedProducts    = Product::where('status', 'failed')->count();
+        // Product stats
+        $totalProducts   = Product::count();
+        $syncedProducts  = Product::where('status', 'synced')->count();
+        $pendingProducts = Product::whereIn('status', ['pending', 'processing'])->count();
+        $failedProducts  = Product::where('status', 'failed')->count();
+        $createdInShopify = Product::where('shopify_action', 'created')->count();
+        $updatedInShopify = Product::where('shopify_action', 'updated')->count();
 
-        $totalErrors       = ErrorLog::count();
-        $recentErrors      = ErrorLog::with('product')
-                                ->orderBy('created_at', 'desc')
-                                ->limit(5)
-                                ->get();
+        // Error stats
+        $totalErrors = ErrorLog::count();
 
-        $recentUploads     = Upload::orderBy('created_at', 'desc')
-                                ->limit(5)
-                                ->get();
-
+        // Success rate
         $successRate = $totalProducts > 0
             ? round(($syncedProducts / $totalProducts) * 100, 1)
             : 0;
 
-        $uploadsByDay = Upload::selectRaw('DATE(created_at) as date, COUNT(*) as count')
-            ->groupBy('date')
-            ->orderBy('date', 'desc')
-            ->limit(7)
+        // Recent uploads with counts
+        $recentUploads = Upload::withCount(['products', 'errorLogs'])
+            ->orderBy('created_at', 'desc')
+            ->limit(6)
             ->get();
+
+        // Recent activity logs
+        $recentActivity = ActivityLog::with('upload')
+            ->orderBy('created_at', 'desc')
+            ->limit(8)
+            ->get();
+
+        // Products per status for chart
+        $productStatusData = [
+            'synced'     => $syncedProducts,
+            'pending'    => $pendingProducts,
+            'failed'     => $failedProducts,
+            'skipped'    => Product::where('status', 'skipped')->count(),
+        ];
 
         return view('admin.dashboard', compact(
             'totalUploads', 'pendingUploads', 'completedUploads', 'failedUploads',
             'totalProducts', 'syncedProducts', 'pendingProducts', 'failedProducts',
-            'totalErrors', 'recentErrors', 'recentUploads', 'successRate', 'uploadsByDay'
+            'createdInShopify', 'updatedInShopify',
+            'totalErrors', 'successRate',
+            'recentUploads', 'recentActivity', 'productStatusData'
         ));
     }
 }

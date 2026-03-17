@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\UploadController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\ErrorLogController;
+use App\Http\Controllers\Admin\ActivityLogController;
 
 // Root redirect
 Route::get('/', function () {
@@ -37,3 +38,7 @@ Route::delete('/admin/products/{id}', [ProductController::class, 'destroy'])->na
 Route::get('/admin/error-logs', [ErrorLogController::class, 'index'])->name('admin.error-logs.index');
 Route::delete('/admin/error-logs/{id}', [ErrorLogController::class, 'destroy'])->name('admin.error-logs.destroy');
 Route::post('/admin/error-logs/clear', [ErrorLogController::class, 'clearAll'])->name('admin.error-logs.clear');
+
+// Activity / System Logs
+Route::get('/admin/activity-logs', [ActivityLogController::class, 'index'])->name('admin.activity-logs.index');
+Route::post('/admin/activity-logs/clear', [ActivityLogController::class, 'clearAll'])->name('admin.activity-logs.clear');

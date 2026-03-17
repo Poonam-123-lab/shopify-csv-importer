@@ -16,6 +16,7 @@ class Upload extends Model
         'total_rows',
         'processed_rows',
         'failed_rows',
+        'collection_id',
     ];
 
     protected $casts = [
@@ -32,6 +33,11 @@ class Upload extends Model
     public function errorLogs()
     {
         return $this->hasMany(ErrorLog::class);
+    }
+
+    public function activityLogs()
+    {
+        return $this->hasMany(ActivityLog::class);
     }
 
     public function getProgressPercentageAttribute(): int

@@ -14,14 +14,15 @@ return new class extends Migration
             $table->string('title');
             $table->text('description')->nullable();
             $table->decimal('price', 10, 2);
-            $table->string('sku')->nullable();
+            $table->string('sku')->nullable()->index();
             $table->string('vendor')->nullable();
             $table->string('product_type')->nullable();
             $table->string('tags')->nullable();
             $table->decimal('compare_at_price', 10, 2)->nullable();
             $table->unsignedInteger('inventory_quantity')->default(0);
-            $table->string('shopify_product_id')->nullable();
-            $table->enum('status', ['pending', 'synced', 'failed', 'skipped'])->default('pending');
+            $table->string('shopify_product_id')->nullable()->index();
+            $table->string('shopify_action')->nullable();  // 'created' or 'updated'
+            $table->enum('status', ['pending', 'processing', 'synced', 'failed', 'skipped'])->default('pending')->index();
             $table->timestamps();
         });
     }

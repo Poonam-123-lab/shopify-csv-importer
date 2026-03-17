@@ -14,14 +14,15 @@ class Product extends Model
         'description',
         'price',
         'sku',
-        'shopify_product_id',
-        'status',
-        'upload_id',
         'vendor',
         'product_type',
         'tags',
         'compare_at_price',
         'inventory_quantity',
+        'shopify_product_id',
+        'shopify_action',
+        'status',
+        'upload_id',
     ];
 
     protected $casts = [
@@ -43,11 +44,12 @@ class Product extends Model
     public function getStatusBadgeClassAttribute(): string
     {
         return match($this->status) {
-            'pending' => 'bg-yellow-100 text-yellow-800',
-            'synced'  => 'bg-green-100 text-green-800',
-            'failed'  => 'bg-red-100 text-red-800',
-            'skipped' => 'bg-gray-100 text-gray-800',
-            default   => 'bg-gray-100 text-gray-800',
+            'pending'    => 'bg-yellow-100 text-yellow-800',
+            'processing' => 'bg-blue-100 text-blue-800',
+            'synced'     => 'bg-green-100 text-green-800',
+            'failed'     => 'bg-red-100 text-red-800',
+            'skipped'    => 'bg-gray-100 text-gray-800',
+            default      => 'bg-gray-100 text-gray-800',
         };
     }
 
@@ -57,6 +59,6 @@ class Product extends Model
             return null;
         }
         $domain = config('shopify.shop_domain');
-        return "https://{$domain}/admin/products/{$this->shopify_product_id}";
+        return $domain ? "https://{$domain}/admin/products/{$this->shopify_product_id}" : null;
     }
 }
