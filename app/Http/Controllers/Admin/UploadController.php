@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Jobs\ProcessCsvImport;
 use App\Http\Controllers\Controller;
 use App\Models\Upload;
 use App\Models\ActivityLog;
-use App\Jobs\ProcessCsvImport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
@@ -67,11 +67,11 @@ class UploadController extends Controller
         ]);
 
         ActivityLog::record(
-            event:     'file_uploaded',
-            message:   "CSV file '{$upload->file_name}' uploaded successfully.",
-            level:     'info',
-            uploadId:  $upload->id,
-            context:   ['file_size' => $file->getSize(), 'collection_id' => $request->input('collection_id')]
+            event: 'file_uploaded',
+            message: "CSV file '{$upload->file_name}' uploaded successfully.",
+            level: 'info',
+            uploadId: $upload->id,
+            context: ['file_size' => $file->getSize(), 'collection_id' => $request->input('collection_id')]
         );
 
         // Dispatch background job
@@ -79,8 +79,8 @@ class UploadController extends Controller
             ->onQueue('csv');
 
         ActivityLog::record(
-            event:    'job_dispatched',
-            message:  "ProcessCsvImport job dispatched for '{$upload->file_name}'.",
+            event: 'job_dispatched',
+            message: "ProcessCsvImport job dispatched for '{$upload->file_name}'.",
             uploadId: $upload->id
         );
 
