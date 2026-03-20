@@ -12,9 +12,7 @@
 <div class="w-full max-w-md">
     <!-- Logo -->
     <div class="text-center mb-8">
-        <div class="inline-flex items-center justify-center w-16 h-16 bg-white rounded-2xl shadow-lg mb-4">
-            <i class="fa-brands fa-shopify text-indigo-700 text-3xl"></i>
-        </div>
+       
         <h1 class="text-3xl font-bold text-white">CSV Importer</h1>
         <p class="text-indigo-300 mt-1">Shopify Product Sync Tool</p>
     </div>
@@ -72,28 +70,12 @@
                     </div>
                     <span class="text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full font-medium">Admin</span>
                 </div>
-                <div class="bg-gray-50 rounded-lg px-3 py-2.5 flex items-center justify-between">
-                    <div>
-                        <p class="text-xs font-medium text-gray-700">manager@shopifyimporter.com</p>
-                        <p class="text-xs text-gray-400">Password: manager123</p>
-                    </div>
-                    <span class="text-xs bg-gray-200 text-gray-600 px-2 py-0.5 rounded-full font-medium">Manager</span>
-                </div>
-                <div class="bg-gray-50 rounded-lg px-3 py-2.5 flex items-center justify-between">
-                    <div>
-                        <p class="text-xs font-medium text-gray-700">operator@shopifyimporter.com</p>
-                        <p class="text-xs text-gray-400">Password: operator123</p>
-                    </div>
-                    <span class="text-xs bg-gray-200 text-gray-600 px-2 py-0.5 rounded-full font-medium">Operator</span>
-                </div>
+                
             </div>
         </div>
     </div>
 
-    <p class="text-center text-indigo-300 text-xs mt-6">
-        © {{ date('Y') }} Shopify CSV Importer. Made with ❤️ by
-        <a href="https://laracopilot.com/" target="_blank" class="underline hover:text-white">LaraCopilot</a>
-    </p>
+  
 </div>
 
 </body>

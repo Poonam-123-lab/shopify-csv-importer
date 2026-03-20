@@ -18,9 +18,7 @@
     <aside class="w-64 flex-shrink-0 bg-gradient-to-b from-indigo-900 to-indigo-700 text-white flex flex-col">
         <div class="px-6 py-5 border-b border-indigo-600">
             <div class="flex items-center space-x-3">
-                <div class="w-9 h-9 bg-white rounded-lg flex items-center justify-center">
-                    <i class="fa-brands fa-shopify text-indigo-700 text-xl"></i>
-                </div>
+               
                 <div>
                     <p class="font-bold text-sm">CSV Importer</p>
                     <p class="text-indigo-300 text-xs">Shopify Sync Tool</p>

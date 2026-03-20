@@ -1,26 +1,45 @@
 <?php
 
 return [
+
     /*
     |--------------------------------------------------------------------------
-    | Shopify Configuration
+    | Shopify Store Domain
     |--------------------------------------------------------------------------
-    | Set these in your .env file:
-    |
-    |   SHOPIFY_SHOP_DOMAIN=your-store.myshopify.com
-    |   SHOPIFY_ACCESS_TOKEN=shpat_xxxxxxxxxxxxxxxxxxxx
-    |   SHOPIFY_API_VERSION=2024-01
-    |   SHOPIFY_LOCATION_GID=gid://shopify/Location/YOUR_LOCATION_ID
-    |   SHOPIFY_DEFAULT_COLLECTION_ID=123456789
-    |
-    | DEMO MODE: If SHOPIFY_SHOP_DOMAIN or SHOPIFY_ACCESS_TOKEN are empty,
-    | the app runs in demo mode — API calls are simulated without making
-    | real requests. Set credentials to enable live Shopify sync.
+    | Example: my-store.myshopify.com  (no https://, no trailing slash)
     */
+    'shop_domain' => env('SHOPIFY_STORE_URL', ''),
 
-    'shop_domain'           => env('SHOPIFY_SHOP_DOMAIN', ''),
-    'access_token'          => env('SHOPIFY_ACCESS_TOKEN', ''),
-    'api_version'           => env('SHOPIFY_API_VERSION', '2024-01'),
-    'location_gid'          => env('SHOPIFY_LOCATION_GID', 'gid://shopify/Location/1'),
-    'default_collection_id' => env('SHOPIFY_DEFAULT_COLLECTION_ID', ''),
+    /*
+    |--------------------------------------------------------------------------
+    | Admin API Access Token
+    |--------------------------------------------------------------------------
+    */
+    'access_token' => env('SHOPIFY_ACCESS_TOKEN', ''),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Admin API Version
+    |--------------------------------------------------------------------------
+    */
+    'api_version' => env('SHOPIFY_API_VERSION', '2024-01'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Default Collection ID
+    |--------------------------------------------------------------------------
+    | Numeric ID or full GID. Used when no collection_id is passed at upload time.
+    */
+    'collection_id' => env('SHOPIFY_COLLECTION_ID', ''),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Shopify Location GID
+    |--------------------------------------------------------------------------
+    | Required for inventory tracking on product variants.
+    | Run: php artisan shopify:location  (see below) to auto-fetch and save it.
+    | Or paste manually: gid://shopify/Location/XXXXXXXXXX
+    */
+    'location_gid' => env('SHOPIFY_LOCATION_GID', ''),
+
 ];

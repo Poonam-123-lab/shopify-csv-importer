@@ -112,11 +112,18 @@ class ProcessCsvImport implements ShouldQueue
                     continue;
                 }
 
-                // Create local product record (status = pending)
-                $product = Product::create(array_merge($mapped, [
-                    'upload_id' => $upload->id,
-                    'status'    => 'pending',
-                ]));
+                // Find existing product by SKU (preferred) or title — update if found
+                $uniqueKey = !empty($mapped['sku'])
+                    ? ['sku' => $mapped['sku']]
+                    : ['title' => $mapped['title']];
+
+                $product = Product::updateOrCreate(
+                    $uniqueKey,
+                    array_merge($mapped, [
+                        'upload_id' => $upload->id,
+                        'status'    => 'pending',
+                    ])
+                );
 
                 // Dispatch individual product sync job for better isolation + retry
                 SyncProductToShopify::dispatch($product->id, $this->collectionId)
@@ -135,7 +142,6 @@ class ProcessCsvImport implements ShouldQueue
 
             // Mark upload as completed (individual products sync separately)
             $upload->update(['status' => 'completed']);
-
         } catch (\Exception $e) {
             Log::error('CSV Import job failed', [
                 'upload_id' => $this->uploadId,
